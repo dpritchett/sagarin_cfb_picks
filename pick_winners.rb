@@ -1,3 +1,7 @@
+# Pick the winners of this week's CFB games by cross-referencing a formatted
+# list of Sagarin ratings with a slate of games.
+#
+# Will fail if ratings.txt and slate.txt are not present.
 require 'text'
 
 def load_ratings()
