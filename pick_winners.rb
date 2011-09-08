@@ -12,7 +12,10 @@ end
 
 def load_slate()
   slate = open('slate.txt').readlines
-  slate = slate.map { |line| line.rstrip.lstrip.split('@') }
+  slate = slate.map.with_index do |line, index|
+    line = line.rstrip.lstrip.split('@')
+    { home: line[0], away: line[1], index: index }
+  end
 end
 
 def print_slate(slate)
@@ -28,29 +31,43 @@ def rating_for_team(team, ratings)
     [line[0], line[1], Text::Levenshtein.distance(team, line[0])]
   end
   matches.sort_by! { |e| e[2] }
-  return matches.first[1].to_f
+  return [team, matches.first[1].to_f]
 end
 
 def pick(game, ratings)
-  ratings = [rating_for_team(game[0], ratings), rating_for_team(game[1], ratings) + 3.08]
-  winner  = ratings.each_with_index.max[1]
-  loser   = ratings.each_with_index.min[1]
+  # 
+  game[:home] = rating_for_team(game[:home], ratings)
+  game[:away] = rating_for_team(game[:away], ratings)
 
-  margin  = ratings[winner] - ratings[loser]
+  spread = game[:home][1] - game[:away][1]
+  
+  game[:winner], game[:loser] = game[:home], game[:away] if spread > 0
+  game[:winner], game[:loser] = game[:away], game[:home] unless spread > 0
+  game.delete :home
+  game.delete :away
 
-  results = [game[winner], game[loser], margin.round(2)]
+  game[:spread] = spread.abs.round 2
+
+  return game
 end
 
-ratings = load_ratings
-slate = load_slate
+def main
+  ratings = load_ratings
+  slate   = load_slate
 
-picks = []
+  picks   = []
+  slate.each { |game| picks.push pick game, ratings }
 
-slate.each do |game|
-  picks.push(pick game, ratings)
+  picks.sort_by! { |game| game[:spread] }
+
+  picks.each.with_index { |pick, index| pick[:confidence] = index + 1 }
+
+  picks.sort_by! { |game| game[:index] }
+
+  picks.each do |game|
+    puts "#{game[:winner]} over #{game[:loser]} [Conf: #{game[:confidence]}]"
+  end
+
 end
 
-picks.sort_by! { |x| 0 - x[2] }
-
-puts "** SAGARIN PICKS AS OF #{Time.now.ctime} **"
-picks.each { |x| puts  "#{x[0]} over #{x[1]} by #{x[2]}" }
+main

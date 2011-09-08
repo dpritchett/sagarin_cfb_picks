@@ -41,5 +41,3 @@ parse_game = function (game) {
 output = ''
 
 $(games).each(function(i, el) { output += parse_game(el) + '\n' } )
-
-alert(output)
