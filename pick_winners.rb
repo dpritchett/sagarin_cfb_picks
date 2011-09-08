@@ -8,6 +8,8 @@ def load_ratings()
   ratings = open('ratings.txt').readlines
   ratings = ratings.map { |x| x[0..29].rstrip.lstrip.gsub(/(\s)(\d)/, ':\2').split(':') }
   ratings = ratings.each.map { |el| [el[0].lstrip.rstrip, el[1]] }
+  ratings.pop
+  return ratings
 end
 
 def load_slate()
@@ -51,11 +53,22 @@ def pick(game, ratings)
   return game
 end
 
-def main
-  ratings = load_ratings
-  slate   = load_slate
+def print_pick(game, pad_width)
+    winner  = "#{game[:winner].first.ljust pad_width} (#{game[:winner].last.to_s.rjust 6})"
+    loser   = "#{game[:loser].first.ljust pad_width} (#{game[:loser].last.to_s.rjust 6})"
+    spread  = game[:spread].round(0).to_s.rjust 2
+    conf    = game[:confidence].to_s.rjust 2
 
-  picks   = []
+    return "#{winner}\tover\t#{loser}\tConf: #{conf}\tSpread: #{spread}"
+end
+
+
+def main
+  ratings      = load_ratings
+  slate        = load_slate
+  longest_name = (ratings.map { |team| team.first.length }).max
+
+  picks        = []
   slate.each { |game| picks.push pick game, ratings }
 
   picks.sort_by! { |game| game[:spread] }
@@ -64,10 +77,16 @@ def main
 
   picks.sort_by! { |game| game[:index] }
 
-  picks.each do |game|
-    puts "#{game[:winner]} over #{game[:loser]} [Conf: #{game[:confidence]}]"
-  end
+  puts "****** PICKS ******".center 80
+  picks.each { |game| puts print_pick game, longest_name }
+  puts "\n"
 
+  puts "****** BLOWOUTS ******".center 80
+
+  picks.sort_by! { |game| -game[:spread] }
+  picks[0..2].each { |game| puts print_pick game, longest_name }
+
+  return picks
 end
 
 main
