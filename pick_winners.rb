@@ -20,8 +20,10 @@ end
 def load_slate()
   slate = open('slate.txt').readlines
   slate = slate.map.with_index do |line, index|
-    line = line.rstrip.lstrip.split('@')
-    { home: line.first, away: line.second, index: index }
+    line = line.rstrip.lstrip.split(':')
+    output = { home: line.first, away: line.second, index: index }
+    output[:home_underdog] = true if line.length == 3
+    return output
   end
 end
 

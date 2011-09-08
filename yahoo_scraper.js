@@ -29,10 +29,10 @@ parse_game = function (game) {
   results.host = $("td :contains('@')", game).text().expand_text()
   results.home_underdog = false
 
-  output = results.favorite + ':' + results.underdog 
+  output = results.favorite + ':' + results.underdog + ':'
 
   if(results.favorite !== results.host) {
-    output += ':+'
+    output += '+'
   }
 
   return output
