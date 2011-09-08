@@ -27,15 +27,16 @@ parse_game = function (game) {
   results.favorite = $(".favorite a", game).text().expand_text()
   results.underdog = $(".underdog a", game).text().expand_text()
   results.host = $("td :contains('@')", game).text().expand_text()
+  results.home_underdog = false
 
-  if(results.favorite === results.host) {
-    results.visitor = results.underdog;
-  }
-  else {
-    results.visitor = results.favorite;
+  output = results.visitor + ':' + results.host 
+  
+
+  if(results.favorite !== results.host) {
+    output += ':+'
   }
 
-  return results.visitor + '@' + results.host
+  return output
 }
 
 output = ''

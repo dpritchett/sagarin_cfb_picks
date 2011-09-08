@@ -10,7 +10,11 @@ def load_ratings()
   ratings = ratings.map { |x| x[0..29].rstrip.lstrip.gsub(/(\s)(\d)/, ':\2').split(':') }
   ratings = ratings.each.map { |el| [el.first.lstrip.rstrip, el.second] }
   ratings.pop
-  return ratings
+
+  hash = {}
+  ratings.each { |el| hash[el.first] = el.second.to_f }
+
+  return hash
 end
 
 def load_slate()
@@ -21,38 +25,26 @@ def load_slate()
   end
 end
 
-def rating_for_team(team, ratings)
-  matches = ratings.map do |line|
-    [line.first, line.second, Text::Levenshtein.distance(team, line.first)]
-  end
-  matches.sort_by! { |e| e.third }
-  return [team, matches.first.second.to_f]
-end
-
 def pick(game, ratings)
-  # 
-  game[:home] = rating_for_team(game[:home], ratings)
-  game[:away] = rating_for_team(game[:away], ratings)
+  game[:spread] = ratings[game[:home]] - ratings[game[:away]] + 3.08
+  game[:spread] = game[:spread].round(2)
 
-  spread = game[:home][1] - game[:away][1]
-  
-  game[:winner], game[:loser] = game[:home], game[:away] if spread > 0
-  game[:winner], game[:loser] = game[:away], game[:home] unless spread > 0
-  game.delete :home
-  game.delete :away
+  game[:home_winner] = game[:spread] > 0 ? true : false
 
-  game[:spread] = spread.abs.round 2
+  game[:arrow] = game[:home_winner] ? "<-" : "->"
 
   return game
 end
 
 def print_pick(game, pad_width)
-    winner  = "#{game[:winner].first.ljust pad_width} (#{game[:winner].last.to_s.rjust 6})"
-    loser   = "#{game[:loser].first.ljust pad_width} (#{game[:loser].last.to_s.rjust 6})"
-    spread  = game[:spread].round(0).to_s.rjust 2
+    home  = "#{game[:home].ljust pad_width}"
+    away   = "#{game[:away].ljust pad_width}"
+    spread  = game[:spread].round(0).to_s.rjust 3
     conf    = game[:confidence].to_s.rjust 2
 
-    return "#{winner}\tover\t#{loser}\tConf: #{conf}\tSpread: #{spread}"
+#    return "#{game[:home]}\t#{game[:arrow]}\t#{game[:away]}"
+
+    return "#{home}\t#{game[:arrow]}\t#{away}\tConf: #{conf}\tSpread: #{spread}"
 end
 
 
@@ -63,18 +55,17 @@ def pick_winners
 
   slate.each { |game| picks.push pick game, ratings }
 
-  picks.sort_by! { |game| game[:spread] }
+  picks.sort_by! { |game| game[:spread].abs }
 
   picks.each.with_index { |pick, index| pick[:confidence] = index + 1 }
 
-  return { picks: picks.sort_by! { |game| game[:index] },
-           ratings: ratings}
+  picks.sort_by! { |game| game[:index] }
+
+  return picks
 end
 
-def print_winners(data)
-  ratings = data[:ratings]
-  picks   = data[:picks]
-  longest_name = (ratings.map { |team| team.first.length }).max
+def print_winners(picks)
+  longest_name = (picks.map { |pick| [pick[:home].length, pick[:away].length].max }).max
 
   puts "****** PICKS ******".center 80
   picks.each { |game| puts print_pick game, longest_name }
@@ -86,12 +77,6 @@ def print_winners(data)
   results[0..2].each { |game| puts print_pick game, longest_name }
 end
 
-def picks_as_json(picks)
-  picks.to_json
-end
+picks = pick_winners
 
-data = pick_winners
-
-print_winners data
-
-#puts picks_as_json data[:picks]
+print_winners picks
