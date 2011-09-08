@@ -30,7 +30,6 @@ parse_game = function (game) {
   results.home_underdog = false
 
   output = results.favorite + ':' + results.underdog 
-  
 
   if(results.favorite !== results.host) {
     output += ':+'
