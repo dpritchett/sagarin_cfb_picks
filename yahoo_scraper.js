@@ -34,7 +34,7 @@ parse_game = function (game) {
   return results.visitor + '@' + results.host
 }
 
-ouput = ''
+output = ''
 
 $(games).each(function(i, el) { output += parse_game(el) + '\n' } )
 
