@@ -10,9 +10,13 @@ String.prototype.expand_text = function() {
   str = this.replace(" (OH)", "-Ohio")
   str = str.replace(" (FL)", "-Florida")
   str = str.replace("Coll.", "College")
-  str = str.replace("Coll.", "College")
   str = str.replace("St.", "State")
   str = str.replace(/^LA /, "Louisiana-")
+  str = str.replace('USC', "Southern California")
+  str = str.replace('UCF', "Central Florida")
+  str = str.replace('Ill.', "Illinois")
+  str = str.replace('Sou.', "Southern")
+  str = str.replace('Cent.', "Central")
 
   str = str.replace(/@|\(\d+\)/gi, '')
   return str
