@@ -21,32 +21,37 @@ def load_slate()
   slate = open('slate.txt').readlines
   slate = slate.map.with_index do |line, index|
     line = line.rstrip.lstrip.split(':')
-    output = { home: line.first, away: line.second, index: index }
-    output[:home_underdog] = true if line.length == 3
-    return output
+    output = { favorite: line.first,
+               underdog: line.second,
+               home_underdog: line.third.nil? ? false : true,
+               index: index }
+
   end
 end
 
 def pick(game, ratings)
-  game[:spread] = ratings[game[:home]] - ratings[game[:away]] + 3.08
+  home_advantage = game[:home_underdog] ? -3.08 : 3.08
+
+  game[:spread] = ratings[game[:favorite]] - ratings[game[:underdog]]
+  game[:spread] += home_advantage
   game[:spread] = game[:spread].round(2)
 
-  game[:home_winner] = game[:spread] > 0 ? true : false
+  game[:upset] = game[:spread] > 0 ? false : true
 
-  game[:arrow] = game[:home_winner] ? "<-" : "->"
+  game[:arrow] = game[:upset] ? "->" : "  "
 
   return game
 end
 
 def print_pick(game, pad_width)
-    home  = "#{game[:home].ljust pad_width}"
-    away   = "#{game[:away].ljust pad_width}"
+    favorite  = "#{game[:favorite].ljust pad_width}"
+    underdog   = "#{game[:underdog].ljust pad_width}"
     spread  = game[:spread].round(0).to_s.rjust 3
     conf    = game[:confidence].to_s.rjust 2
 
-#    return "#{game[:home]}\t#{game[:arrow]}\t#{game[:away]}"
+#    return "#{game[:favorite]}\t#{game[:arrow]}\t#{game[:underdog]}"
 
-    return "#{home}\t#{game[:arrow]}\t#{away}\tConf: #{conf}\tSpread: #{spread}"
+    return "#{favorite}\t#{game[:arrow]}\t#{underdog}\t[#{conf}]\t[#{spread}]"
 end
 
 
@@ -67,7 +72,7 @@ def pick_winners
 end
 
 def print_winners(picks)
-  longest_name = (picks.map { |pick| [pick[:home].length, pick[:away].length].max }).max
+  longest_name = (picks.map { |pick| [pick[:favorite].length, pick[:underdog].length].max }).max
 
   puts "****** PICKS ******".center 80
   picks.each { |game| puts print_pick game, longest_name }
@@ -77,6 +82,13 @@ def print_winners(picks)
 
   results = picks.sort_by { |game| -game[:spread] }
   results[0..2].each { |game| puts print_pick game, longest_name }
+end
+
+def picks_as_json(picks)
+  output = []
+  picks.each { |pick| output.push [pick[:upset], pick[:confidence]] }
+  output.map! { |pick| { upset: pick.first, confidence: pick.second } }
+  return output
 end
 
 picks = pick_winners
