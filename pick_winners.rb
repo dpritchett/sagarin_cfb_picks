@@ -17,8 +17,10 @@ def load_ratings()
   return hash
 end
 
-def load_slate()
-  slate = open('slate.txt').readlines
+def load_slate(str="")
+  str = str.lstrip.rstrip.split("\n")
+  slate = str.empty? ? str : open('slate.txt').readlines
+  puts slate
   slate = slate.map.with_index do |line, index|
     line = line.rstrip.lstrip.split(':')
     output = { favorite: line.first,
@@ -44,20 +46,21 @@ def pick(game, ratings)
 end
 
 def print_pick(game, pad_width)
-    favorite  = "#{game[:favorite].ljust pad_width}"
-    underdog   = "#{game[:underdog].ljust pad_width}"
-    spread  = game[:spread].round(0).to_s.rjust 3
-    conf    = game[:confidence].to_s.rjust 2
+  favorite  = "#{game[:favorite].ljust pad_width}"
+  underdog   = "#{game[:underdog].ljust pad_width}"
+  spread  = game[:spread].round(0).to_s.rjust 3
+  conf    = game[:confidence].to_s.rjust 2
 
-#    return "#{game[:favorite]}\t#{game[:arrow]}\t#{game[:underdog]}"
+  #    return "#{game[:favorite]}\t#{game[:arrow]}\t#{game[:underdog]}"
 
-    return "#{favorite}\t#{game[:arrow]}\t#{underdog}\t[#{conf}]\t[#{spread}]"
+  return "#{favorite}\t#{game[:arrow]}\t#{underdog}\t[#{conf}]\t[#{spread}]"
 end
 
 
-def pick_winners
+def pick_winners(str="")
   ratings      = load_ratings
-  slate        = load_slate
+  slate        = load_slate(str)
+  puts slate
   picks        = []
 
   slate.each { |game| picks.push pick game, ratings }

@@ -14,10 +14,11 @@ make_pick = function(matchup) {
 }
 
 make_picks = function() {
-$.getJSON('http://dpritchett.xen.prgmr.com:8000/?callback=?', function(data) {
-        picks = data;
+$.getJSON('http://dpritchett.xen.prgmr.com:8000/?callback=?', {data: output},function(data) {
+            picks = data;
+//            console.log(data);
         $.each(matchups, function(i, matchup) { make_pick(matchup); });
-        });
+                    });
 }
 
 make_picks();
