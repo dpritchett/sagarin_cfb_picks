@@ -11,6 +11,6 @@ wget -q $SAGARIN_URL
 ack-grep -h "^\s+\d" | cut -c 6-60 | sed "s/=.*>//" | cut --complement -c 23-24 > $RATINGS_FILE
 
 ruby pick_winners.rb | tee $OUTFILE_NAME
-uuencode $OUTFILE_NAME $OUTFILE_NAME | mail -s "Weekly Picks" $MY_EMAIL_ADDRESS
+#uuencode $OUTFILE_NAME $OUTFILE_NAME | mail -s "Weekly Picks" $MY_EMAIL_ADDRESS
 
-rm $OUTFILE_NAME $SAGARIN_FILE
+#rm $OUTFILE_NAME $SAGARIN_FILE

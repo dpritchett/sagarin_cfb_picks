@@ -54,15 +54,18 @@ pick_em = function() {
     else{
       $(".underdog-win input:first", matchup).prop("checked", true);
     }
+
     $("select", matchup).val(this_pick.confidence);
-    return this_pick.confidence;}
-    make_picks = function() {
-      $.getJSON('http://dpritchett.xen.prgmr.com:8000/?callback=?', {data: output},function(data) {
-          picks = data;
-          //            console.log(data);r
-          $.each(matchups, function(i, matchup) { make_pick(matchup); }); });
-    }
-    make_picks();
+
+    return this_pick.confidence;
+  }
+
+  make_picks = function() {
+    $.getJSON('http://dpritchett.xen.prgmr.com:8000/?callback=?', {data: output},function(data) {
+        picks = data;
+        $.each(matchups, function(i, matchup) { make_pick(matchup); }); });
+  }
+  make_picks();
 }
 
 pick_em();

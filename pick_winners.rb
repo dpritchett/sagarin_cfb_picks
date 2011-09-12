@@ -1,7 +1,7 @@
 # Pick the winners of this week's CFB games by cross-referencing a formatted
 # list of Sagarin ratings with a slate of games.
 #
-# Will fail if ratings.txt and slate.txt are not present.
+# Will fail if ratings.txt is not present.
 require 'text'
 require 'active_support/core_ext'
 
@@ -18,8 +18,10 @@ def load_ratings()
 end
 
 def load_slate(str="")
+  # Loads a slate of games from the str arg or from slate.txt.
+  # Marks favorite, underdog, home team, and Yahoo table index.
   str = str.lstrip.rstrip.split("\n")
-  slate = str.empty? ? str : open('slate.txt').readlines
+  slate = str.empty? ? open('slate.txt').readlines : str
   puts slate
   slate = slate.map.with_index do |line, index|
     line = line.rstrip.lstrip.split(':')
@@ -27,7 +29,6 @@ def load_slate(str="")
                underdog: line.second,
                home_underdog: line.third.nil? ? false : true,
                index: index }
-
   end
 end
 
@@ -51,11 +52,8 @@ def print_pick(game, pad_width)
   spread  = game[:spread].round(0).to_s.rjust 3
   conf    = game[:confidence].to_s.rjust 2
 
-  #    return "#{game[:favorite]}\t#{game[:arrow]}\t#{game[:underdog]}"
-
   return "#{favorite}\t#{game[:arrow]}\t#{underdog}\t[#{conf}]\t[#{spread}]"
 end
-
 
 def pick_winners(str="")
   ratings      = load_ratings
@@ -95,5 +93,4 @@ def picks_as_json(picks)
 end
 
 picks = pick_winners
-
-print_winners picks
+print_winners(picks)
