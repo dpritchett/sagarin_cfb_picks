@@ -61,7 +61,13 @@ def pick_winners(str="")
   puts slate
   picks        = []
 
-  slate.each { |game| picks.push pick game, ratings }
+  slate.each do |game|
+     begin
+         picks.push pick game, ratings
+     rescue
+          puts "Failed lookup for #{game.to_s}"
+     end
+  end
 
   picks.sort_by! { |game| game[:spread].abs }
 

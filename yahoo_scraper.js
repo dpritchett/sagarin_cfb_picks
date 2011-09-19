@@ -17,6 +17,7 @@ String.prototype.expand_text = function() {
     str = str.replace('Ill.', "Illinois")
     str = str.replace('Sou.', "Southern")
     str = str.replace('Cent.', "Central")
+    str = str.replace('W.', "Western")
 
     str = str.replace(/@|\(\d+\)/gi, '')
     return str
