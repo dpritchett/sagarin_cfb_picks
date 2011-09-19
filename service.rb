@@ -7,8 +7,13 @@ get '/' do
   content_type :js
   callback = params.delete('callback')
   slate = params.delete('data')
-  winners = picks_as_json pick_winners(slate)
+
+  picks = pick_winners slate
+  print_winners picks
+
+  winners = picks_as_json picks
   stuff = { winners: winners }
+
   "#{callback}(#{winners.to_json})"
 end
 
