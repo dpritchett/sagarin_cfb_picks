@@ -7,7 +7,7 @@ RATINGS_FILE='ratings.txt'
 SAGARIN_FILE='fbt11.htm'
 OUTFILE_NAME="picks-$DATE.txt"
 
-wget -q $SAGARIN_URL
+curl $SAGARIN_URL > fbt11.htm
 ack-grep -h "^\s+\d" | cut -c 6-60 | sed "s/=.*>//" | cut --complement -c 23-24 > $RATINGS_FILE
 
 ruby pick_winners.rb | tee $OUTFILE_NAME
