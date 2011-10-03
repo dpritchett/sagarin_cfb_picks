@@ -7,6 +7,8 @@
 games = $(".matchup")
 
 String.prototype.expand_text = function() {
+    //Really oughta break this out into a function applied to a list of ordered
+    //pairs.
   str = this.replace(" (OH)", "-Ohio")
     str = str.replace(" (FL)", "-Florida")
     str = str.replace("Coll.", "College")
