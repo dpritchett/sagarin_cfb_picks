@@ -11,6 +11,7 @@ curl $SAGARIN_URL > fbt11.htm
 ack-grep -h "^\s+\d" | cut -c 6-60 | sed "s/=.*>//" | cut --complement -c 23-24 > $RATINGS_FILE
 
 ruby pick_winners.rb | tee $OUTFILE_NAME
+ruby ./service.rb -p 8000
 #uuencode $OUTFILE_NAME $OUTFILE_NAME | mail -s "Weekly Picks" $MY_EMAIL_ADDRESS
 
 #rm $OUTFILE_NAME $SAGARIN_FILE
