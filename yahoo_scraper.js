@@ -21,8 +21,8 @@ String.prototype.expand_text = function() {
     str = str.replace('Cent.', "Central")
     str = str.replace('W.', "Western")
     str = str.replace('N.C.', "NC")
-    str = str.replace('Tenn-', "Tennessee-")
-    str = str.replace('Middle Tenn. St', "Middle Tennessee")
+    str = str.replace("Tenn-Martin", "Tennessee-Martin")
+    str = str.replace("Middle Tenn. St.", "Middle Tennessee")
 
     str = str.replace(/@|\(\d+\)/gi, '')
     return str
