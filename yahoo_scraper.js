@@ -11,6 +11,7 @@ String.prototype.expand_text = function() {
     //pairs.
   str = this.replace(" (OH)", "-Ohio")
     str = str.replace(" (FL)", "-Florida")
+    str = str.replace("Middle Tenn. St.", "Middle Tennessee")
     str = str.replace("Coll.", "College")
     str = str.replace("St.", "State")
     str = str.replace(/^LA /, "Louisiana-")
@@ -22,7 +23,6 @@ String.prototype.expand_text = function() {
     str = str.replace('W.', "Western")
     str = str.replace('N.C.', "NC")
     str = str.replace("Tenn-Martin", "Tennessee-Martin")
-    str = str.replace("Middle Tenn. St.", "Middle Tennessee")
 
     str = str.replace(/@|\(\d+\)/gi, '')
     return str
