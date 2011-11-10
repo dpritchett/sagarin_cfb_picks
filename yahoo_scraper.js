@@ -23,6 +23,7 @@ String.prototype.expand_text = function() {
     str = str.replace('W.', "Western")
     str = str.replace('N.C.', "NC")
     str = str.replace("Tenn-Martin", "Tennessee-Martin")
+    str = str.replace("West.", "Western")
 
     str = str.replace(/@|\(\d+\)/gi, '')
     return str

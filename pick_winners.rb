@@ -33,7 +33,7 @@ def load_slate(str="")
 end
 
 def pick(game, ratings)
-  home_advantage = game[:home_underdog] ? -3.08 : 3.08
+  home_advantage = game[:home_underdog] ? -2.64 : 2.64 
 
   game[:spread] = ratings[game[:favorite]] - ratings[game[:underdog]]
   game[:spread] += home_advantage
